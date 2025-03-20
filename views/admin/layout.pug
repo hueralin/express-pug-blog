@@ -1,0 +1,70 @@
+doctype html
+html
+  head
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    title= title
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel='stylesheet' href='/stylesheets/admin.css')
+    //- link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css')
+  body
+    header.admin-header
+        h1= title
+        .admin-welcome
+            p 欢迎回来, #{user.username}!
+            a(href='/api/admin/logout') 退出
+        .admin-menu
+            .menu-item
+                a(href='/admin/articles') 文章管理
+            .menu-item
+                a(href='/admin/categories') 分类管理
+            .menu-item
+                a(href='/admin/tags') 标签管理
+            .menu-item
+                a(href='/admin/attachments') 附件管理
+            .menu-item
+                a(href='/admin/users') 用户管理
+
+    main.admin-main
+      block content
+    
+    footer.admin-footer
+      p &copy; 2024 博客管理系统
+
+    style.
+        .admin-header,
+        .admin-main,
+        .admin-footer {
+          padding: 20px;
+        }
+        .admin-welcome {
+          margin-bottom: 30px;
+          padding: 15px;
+          background-color: #f8f9fa;
+          border-radius: 5px;
+        }
+        .admin-menu {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+          gap: 20px;
+        }
+        .menu-item {
+          padding: 20px;
+          background-color: #fff;
+          border: 1px solid #dee2e6;
+          border-radius: 5px;
+          text-align: center;
+          transition: all 0.3s ease;
+        }
+        .menu-item:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .menu-item a {
+          color: #333;
+          text-decoration: none;
+          font-weight: bold;
+        }
+    
+    //- script(src='/javascripts/admin.js')
+    block scripts

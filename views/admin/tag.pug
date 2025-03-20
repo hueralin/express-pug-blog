@@ -1,0 +1,42 @@
+extends layout
+
+block content
+  .admin-content
+    .action-bar
+      button.action-button(onclick='showModal()')
+        i.fas.fa-plus
+        span 新增标签
+    
+    .table-responsive
+      table.table
+        thead
+          tr
+            th 名称
+            th 文章数量
+            th 创建时间
+            th 操作
+        tbody#tagList
+          // 标签列表将通过 JavaScript 动态加载
+    
+    // 新增/编辑标签模态框
+    #tagModal.modal
+      .modal-overlay(onclick='hideModal()')
+      .modal-dialog
+        .modal-content
+          .modal-header
+            h5#modalTitle.modal-title 新增标签
+            button.modal-close(onclick='hideModal()')
+              i.fas.fa-times
+          .modal-body
+            form#tagForm
+              input#tagId(type='hidden')
+              .form-group
+                label.form-label(for='name') 名称
+                input#name.form-input(type='text' required)
+                .form-error 请输入标签名称
+          .modal-footer
+            button.btn.btn-cancel(onclick='hideModal()') 取消
+            button#saveTag.btn.btn-submit(type='submit') 保存
+
+block scripts
+  script(src='/javascripts/tag.js')
