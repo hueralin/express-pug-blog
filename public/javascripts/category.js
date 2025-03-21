@@ -51,6 +51,19 @@ function resetForm() {
   document.getElementById('modalTitle').textContent = '新增分类';
 }
 
+// 显示模态框
+function showModal(needReset = false) {
+  if (needReset) {
+    resetForm();
+  }
+  document.getElementById('categoryModal').classList.add('show');
+}
+
+// 隐藏模态框
+function hideModal() {
+  document.getElementById('categoryModal').classList.remove('show');
+}
+
 // 编辑分类
 function editCategory(id) {
   const category = categories.find(c => c.id === id);
@@ -59,7 +72,7 @@ function editCategory(id) {
     document.getElementById('name').value = category.name;
     document.getElementById('description').value = category.description || '';
     document.getElementById('modalTitle').textContent = '编辑分类';
-    new bootstrap.Modal(document.getElementById('categoryModal')).show();
+    showModal();
   }
 }
 
@@ -70,7 +83,7 @@ async function saveCategory() {
   const description = document.getElementById('description').value.trim();
 
   if (!name) {
-    alert('请输入分类名称');
+    $toast.warning('请输入分类名称');
     return;
   }
 
@@ -87,7 +100,7 @@ async function saveCategory() {
 
     const result = await response.json();
     if (result.code === 0) {
-      bootstrap.Modal.getInstance(document.getElementById('categoryModal')).hide();
+      hideModal();
       loadCategories();
     } else {
       alert(result.message);
@@ -100,7 +113,9 @@ async function saveCategory() {
 
 // 删除分类
 async function deleteCategory(id) {
-  if (!confirm('确定要删除这个分类吗？')) {
+  try {
+    await $confirm.warning('确定要删除这个分类吗？')
+  } catch (error) {
     return;
   }
 

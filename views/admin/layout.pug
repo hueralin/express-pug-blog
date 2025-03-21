@@ -6,7 +6,8 @@ html
     title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
     link(rel='stylesheet' href='/stylesheets/admin.css')
-    //- link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css')
+    link(rel='stylesheet' href='/stylesheets/toast.css')
+    link(rel='stylesheet' href='/stylesheets/confirm.css')
   body
     header.admin-header
         h1= title
@@ -66,5 +67,6 @@ html
           font-weight: bold;
         }
     
-    //- script(src='/javascripts/admin.js')
+    script(src='/javascripts/toast.js')
+    script(src='/javascripts/confirm.js')
     block scripts

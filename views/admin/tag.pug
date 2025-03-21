@@ -3,8 +3,7 @@ extends layout
 block content
   .admin-content
     .action-bar
-      button.action-button(onclick='showModal()')
-        i.fas.fa-plus
+      button.btn.action-button(onclick='showModal(true)')
         span 新增标签
     
     .table-responsive
@@ -14,7 +13,7 @@ block content
             th 名称
             th 文章数量
             th 创建时间
-            th 操作
+            th(style="width: 180px;") 操作
         tbody#tagList
           // 标签列表将通过 JavaScript 动态加载
     

@@ -51,8 +51,10 @@ function resetForm() {
 }
 
 // 显示模态框
-function showModal() {
-  resetForm();
+function showModal(needReset = false) {
+  if (needReset) {
+    resetForm();
+  }
   document.getElementById('tagModal').classList.add('show');
 }
 
@@ -79,7 +81,7 @@ async function saveTag(event) {
   const name = document.getElementById('name').value.trim();
 
   if (!name) {
-    alert('请输入标签名称');
+    $toast.warning('请输入标签名称');
     return;
   }
 
@@ -109,7 +111,9 @@ async function saveTag(event) {
 
 // 删除标签
 async function deleteTag(id) {
-  if (!confirm('确定要删除这个标签吗？')) {
+  try {
+    await $confirm.warning('确定要删除这个标签吗？')
+  } catch (error) {
     return;
   }
 

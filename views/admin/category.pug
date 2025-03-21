@@ -3,8 +3,7 @@ extends layout
 block content
   .admin-content
     .action-bar
-      button.action-button(data-bs-toggle='modal' data-bs-target='#categoryModal' onclick='resetForm()')
-        i.fas.fa-plus
+      button.btn.action-button(onclick='showModal(true)')
         span 新增分类
     
     .table-responsive
@@ -20,25 +19,27 @@ block content
           // 分类列表将通过 JavaScript 动态加载
     
     // 新增/编辑分类模态框
-    #categoryModal.modal.fade(tabindex='-1' aria-labelledby='modalTitle' aria-hidden='true')
-      .modal-dialog.modal-dialog-centered
+    #categoryModal.modal
+      .modal-overlay(onclick='hideModal()')
+      .modal-dialog
         .modal-content
           .modal-header
             h5#modalTitle.modal-title 新增分类
-            button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+            button.modal-close(onclick='hideModal()')
+              i.fas.fa-times
           .modal-body
-            form#categoryForm.needs-validation(novalidate)
+            form#categoryForm
               input#categoryId(type='hidden')
-              .mb-3
+              .form-group
                 label.form-label(for='name') 名称
-                input#name.form-control(type='text' required)
-                .invalid-feedback 请输入分类名称
-              .mb-3
+                input#name.form-input(type='text' required)
+                .form-error 请输入分类名称
+              .form-group
                 label.form-label(for='description') 描述
-                textarea#description.form-control(rows='3')
+                textarea#description.form-input(rows='3')
           .modal-footer
-            button.btn.btn-secondary(type='button' data-bs-dismiss='modal') 取消
-            button#saveCategory.btn.btn-primary(type='submit') 保存
+            button.btn.btn-cancel(onclick='hideModal()') 取消
+            button#saveCategory.btn.btn-submit(type='submit') 保存
 
 block scripts
   script(src='/javascripts/category.js')
