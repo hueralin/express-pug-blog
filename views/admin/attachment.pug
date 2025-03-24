@@ -1,0 +1,157 @@
+extends layout
+
+block content
+  .container(class='mx-auto px-4 py-8')
+    .header(class='flex justify-between items-center mb-6')
+      h2(class='text-2xl font-bold') 附件管理
+      button#uploadBtn(class='bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded')
+        | 上传文件
+      input#fileInput(type='file' class='hidden')
+    
+    #loading(class='text-center py-8 hidden')
+      p(class='text-gray-500') 正在加载附件列表...
+    
+    #error(class='text-center py-8 text-red-500 hidden')
+      p 加载附件列表失败
+    
+    .attachments-grid(class='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4')
+
+  script.
+    document.addEventListener('DOMContentLoaded', function() {
+      const uploadBtn = document.getElementById('uploadBtn');
+      const fileInput = document.getElementById('fileInput');
+      const attachmentsGrid = document.querySelector('.attachments-grid');
+      const loadingEl = document.getElementById('loading');
+      const errorEl = document.getElementById('error');
+
+      // 加载附件列表
+      async function loadAttachments() {
+        loadingEl.classList.remove('hidden');
+        errorEl.classList.add('hidden');
+        attachmentsGrid.innerHTML = '';
+
+        try {
+          const response = await fetch('/api/admin/attachments');
+          const result = await response.json();
+
+          if (response.ok) {
+            if (result.data && result.data.length > 0) {
+              result.data.forEach(attachment => {
+                const card = document.createElement('div');
+                card.className = 'attachment-card bg-white rounded-lg shadow-md p-4';
+                
+                const preview = document.createElement('div');
+                preview.className = 'preview mb-4 h-40 flex items-center justify-center bg-gray-100 rounded';
+                
+                if (attachment.mime_type.startsWith('image/')) {
+                  const img = document.createElement('img');
+                  img.src = attachment.path;
+                  img.className = 'max-h-full max-w-full object-contain';
+                  preview.appendChild(img);
+                } else {
+                  const fileIcon = document.createElement('div');
+                  fileIcon.className = 'file-icon text-4xl text-gray-400';
+                  fileIcon.textContent = '📄';
+                  preview.appendChild(fileIcon);
+                }
+                
+                const info = document.createElement('div');
+                info.className = 'info space-y-2';
+                info.innerHTML = `
+                  <div class="filename font-medium truncate">${attachment.filename}</div>
+                  <div class="details text-sm text-gray-500">
+                    <div class="size">${Math.round(attachment.size / 1024)} KB</div>
+                    <div class="type">${attachment.mime_type}</div>
+                    <div class="date">${new Date(attachment.created_at).toLocaleDateString()}</div>
+                  </div>
+                  <div class="actions flex justify-end mt-2">
+                    <button class="delete-btn text-red-500 hover:text-red-600" data-id="${attachment.aid}">删除</button>
+                  </div>
+                `;
+                
+                card.appendChild(preview);
+                card.appendChild(info);
+                attachmentsGrid.appendChild(card);
+              });
+
+              // 重新绑定删除按钮事件
+              bindDeleteButtons();
+            } else {
+              attachmentsGrid.innerHTML = `
+                <div class="no-attachments col-span-3 text-center py-8 text-gray-500">
+                  <p>暂无附件</p>
+                </div>
+              `;
+            }
+          } else {
+            throw new Error(result.error || '加载失败');
+          }
+        } catch (error) {
+          errorEl.classList.remove('hidden');
+        } finally {
+          loadingEl.classList.add('hidden');
+        }
+      }
+
+      // 绑定删除按钮事件
+      function bindDeleteButtons() {
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+          btn.addEventListener('click', async () => {
+            const id = btn.dataset.id;
+            const confirmed = await showConfirm('确定要删除这个附件吗？');
+            
+            if (confirmed) {
+              try {
+                const response = await fetch(`/api/admin/attachments/${id}`, {
+                  method: 'DELETE'
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                  showToast('删除成功', 'success');
+                  loadAttachments(); // 重新加载列表
+                } else {
+                  showToast(result.error || '删除失败', 'error');
+                }
+              } catch (error) {
+                showToast('删除失败', 'error');
+              }
+            }
+          });
+        });
+      }
+
+      // 上传按钮点击事件
+      uploadBtn.addEventListener('click', () => {
+        fileInput.click();
+      });
+
+      // 文件选择事件
+      fileInput.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+          const response = await fetch('/api/admin/attachments', {
+            method: 'POST',
+            body: formData
+          });
+
+          const result = await response.json();
+          if (response.ok) {
+            showToast('上传成功', 'success');
+            loadAttachments(); // 重新加载列表
+          } else {
+            showToast(result.error || '上传失败', 'error');
+          }
+        } catch (error) {
+          showToast('上传失败', 'error');
+        }
+      });
+
+      // 初始加载附件列表
+      loadAttachments();
+    });

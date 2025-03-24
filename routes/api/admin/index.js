@@ -14,10 +14,7 @@ router.get('/logout', AuthController.logout);
 // 验证用户是否登录
 router.use(Auth.verifySession);
 
-// 分类管理路由
-router.use('/categories', require('./category'));
-
-// 标签管理路由
-router.use('/tags', require('./tag'));
+// 附件管理
+router.use('/attachments', require('./attachment'));
 
 module.exports = router;

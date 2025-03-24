@@ -10,14 +10,9 @@ router.get('/', (req, res) => {
   res.render('admin/index', { title: '管理后台', user: req.user });
 });
 
-// 分类管理页面
-router.get('/categories', (req, res) => {
-  res.render('admin/category', { title: '分类管理', user: req.user });
-});
-
-// 标签管理页面
-router.get('/tags', (req, res) => {
-  res.render('admin/tag', { title: '标签管理', user: req.user });
+// 附件管理
+router.get('/attachments', (req, res) => {
+  res.render('admin/attachment', { title: '附件管理', user: req.user });
 });
 
 module.exports = router;
